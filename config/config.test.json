@@ -1,0 +1,27 @@
+{
+  "database": {
+    "databaseName": "u728953441_ke",
+    "username": "root",
+    "password": "3sd@12345",
+    "host": "localhost",
+    "dialect": "mysql"
+  },
+   "odbc": {
+    "DSN":"mssql_odbc_ug",
+    "UID": "3sdlabour",
+    "PWD": "Abc123@@@"
+  },
+   "server": {
+    "port": 4000,
+    "host": "192.168.29.7"
+  },
+  "auth": {
+    "secretKey": "Manoj@1234"
+  },
+  "storage": {
+    "company": "../public/company/"
+  },
+  "dateUtil": {
+    "timezone": "Africa/Nairobi"
+  }
+}
