@@ -73,8 +73,8 @@ exports.importFromExcel = async (req, res, next) => {
         const filePath = req.file.path; // Path to the uploaded file
 
         // Call the service to import data from Excel and insert records
-        await targetPlanService.importFromExcel(filePath);
-        res.status(200).json(new ApiResponse(200, [], "Data imported successfully"));
+        const result = await targetPlanService.importFromExcel(filePath, next);
+        res.status(200).json(new ApiResponse(200, result, "Data imported successfully"));
     } catch (error) {
         next(error);
     }

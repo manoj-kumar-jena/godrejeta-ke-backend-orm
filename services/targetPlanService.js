@@ -5,6 +5,7 @@ const { sequelize } = require('../models/TargetPlan');
 const { CustomError } = require('../utils/error');
 const dateUtils = require('../utils/dateUtils');
 const ExcelJS = require('exceljs');
+const fs = require('fs');
 
 exports.insertOrUpdate = async (records) => {
     let createdCount = 0;
@@ -110,33 +111,60 @@ exports.getTargetPlansForThisMonth = async () => {
 
 exports.importFromExcel = async (filePath) => {
     try {
+        const notFoundItems = []; // Array to store descriptions of items not found in the database
+
         const workbook = new ExcelJS.Workbook();
         await workbook.xlsx.readFile(filePath);
         const worksheet = workbook.getWorksheet(1); // Assuming data is in the first worksheet
         // Initialize a variable to track whether the current row is the first row
         let isFirstRow = true;
         // Iterate over each row in the worksheet
-        worksheet.eachRow({ includeEmpty: false }, async (row, rowNumber) => {
-            // Skip the first row (header row)
-            if (isFirstRow) {
-                isFirstRow = false; // Set isFirstRow to false for subsequent rows
-                return;
-            }
-            const itemDescription = row.getCell('A').value; // Assuming item description is in column A
-            const itemGroup = row.getCell('B').value; // Assuming item group is in column B
-            const plan = row.getCell('C').value; // Assuming plan is in column C
-            const date = row.getCell('D').value; // Assuming date is in column D
-            console.log(itemDescription, itemGroup, plan, date);
-            // Fetch item from database based on item description
-            const item = await Item.findOne({ where: { item_description: itemDescription } });
+        // Process each row in the worksheet
+        await new Promise((resolve, reject) => {
+            worksheet.eachRow({ includeEmpty: false }, async (row, rowNumber) => {
+                // Skip the first row (header row)
+                if (isFirstRow) {
+                    isFirstRow = false; // Set isFirstRow to false for subsequent rows
+                    return;
+                }
+                const itemDescription = row.getCell('A').value; // Assuming item description is in column A
+                const itemGroup = row.getCell('B').value; // Assuming item group is in column B
+                const plan = row.getCell('C').value; // Assuming plan is in column C
+                const date = row.getCell('D').value; // Assuming date is in column D
+                //console.log(itemDescription, itemGroup, plan, date);
 
-            if (!item) {
-                throw new Error(`Item with description '${itemDescription}' not found`);
-            }
+                // Fetch item from database based on item description
+                const item = await Item.findOne({ where: { item_description: itemDescription } });
 
-            // Insert record into the target_plan table
-            await TargetPlan.create({ product_id: item.id, plan, datetime: date });
+                if (!item) {
+                    // Log the error and continue processing other rows
+                    console.log(`Item with description '${itemDescription}' not found`);
+                    notFoundItems.push(itemDescription); // Store the description in the array
+                }
+                else {
+                    // Find or create target plan for the item and date
+                    let targetPlan = await TargetPlan.findOne({
+                        where: {
+                            product_id: item.id,
+                            datetime: date
+                        }
+                    });
+
+                    if (!targetPlan) {
+                        // If target plan does not exist, create it
+                        targetPlan = await TargetPlan.create({ product_id: item.id, plan: plan, datetime: date });
+                    } else {
+                        // If target plan exists, update it
+                        await targetPlan.update({ plan: plan });
+                    }
+                }
+                // Resolve the promise when all rows have been processed
+                if (rowNumber === worksheet.rowCount) resolve();
+            });
         });
+        // Delete the uploaded file after import
+        fs.unlinkSync(filePath);
+        return { notFoundItems: notFoundItems };
     } catch (error) {
         throw error;
     }

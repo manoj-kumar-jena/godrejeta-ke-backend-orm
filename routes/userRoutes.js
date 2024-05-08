@@ -3,9 +3,10 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 
-// GET user by email
-router.get('/user/:email', userController.getUserByEmail);
-// POST register
-router.post('/register', userController.register);
+router.get('/role/:roleId', userController.getUsersByRoleId);
+router.get('/:id', userController.getUserByIdOrEntryId);
+router.get('/', userController.getAllUsers);
+router.put('/update-password', userController.updateUserPassword);
+router.put('/update-language', userController.updateUserLanguage);
 
 module.exports = router;

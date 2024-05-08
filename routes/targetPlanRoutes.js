@@ -30,9 +30,7 @@ router.post('/insert_or_update', targetPlanController.insertOrUpdate);
  *       '500':
  *         description: Internal server error
  *     tags:
- *       - Import
- *       - Excel
- *       - Data
+ *       - Target Plan
  */
 router.post('/import', upload.single('file'), targetPlanController.importFromExcel);
 router.get('/datetime', targetPlanController.getTargetPlansByDatetime);

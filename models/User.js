@@ -1,8 +1,8 @@
-// models/GeoposUser.js
+// models/User.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database/connection');
 
-const GeoposUser = sequelize.define('geopos_user', {
+const User = sequelize.define('geopos_user', {
     id: {
         type: DataTypes.INTEGER.UNSIGNED,
         primaryKey: true,
@@ -15,7 +15,7 @@ const GeoposUser = sequelize.define('geopos_user', {
     },
     pass: {
         type: DataTypes.STRING(64),
-        allowNull: false,
+        allowNull: true,
     },
     entryid: {
         type: DataTypes.STRING(255),
@@ -79,11 +79,11 @@ const GeoposUser = sequelize.define('geopos_user', {
     },
     loc: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
     },
     cid: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
     },
     lang: {
         type: DataTypes.STRING(255),
@@ -92,11 +92,11 @@ const GeoposUser = sequelize.define('geopos_user', {
     },
     user_status: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
     },
 }, {
     tableName: 'geopos_users',
     timestamps: false, // Disable timestamps (createdAt and updatedAt columns)
 });
 
-module.exports = GeoposUser;
+module.exports = User;

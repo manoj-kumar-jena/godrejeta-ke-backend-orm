@@ -10,7 +10,7 @@ const { hashPassword } = require('../utils/passwordUtils'); // Import the hashPa
 const sequelize = require('../database/connection'); // Import Sequelize connection
 const { QueryTypes } = require('sequelize');
 //OR
-const GeoposUser = require('../models/GeoposUser');
+const User = require('../models/User');
 const { CustomError } = require('../utils/error');
 
 // Generate JWT token for user
@@ -20,7 +20,7 @@ exports.generateToken = (userId, roleid, email, entryid) => {
 
 // Verify user credentials and generate token
 exports.authenticateUser = async (email, password) => {
-    //const user = await GeoposUser.findOne({ where: { email } });
+    //const user = await User.findOne({ where: { email } });
 
     // Define your custom SQL query
     const query = `

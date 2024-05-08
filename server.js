@@ -23,6 +23,9 @@ const itemCodeRoutes = require('./routes/itemCodeRoutes');
 const itemSectionRoutes = require('./routes/itemSectionRoutes');
 const itemRoutes = require('./routes/itemRoutes');
 const targetPlanRoutes = require('./routes/targetPlanRoutes');
+const employeeRoutes = require('./routes/employeeRoutes');
+const operatorAssignmentRoutes = require('./routes/operatorAssignmentRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
@@ -66,7 +69,15 @@ app.use('/api/items', authMiddleware.verifyToken, itemRoutes);// Plural endpoint
 // Target plan routes
 app.use('/api/target-plan', authMiddleware.verifyToken, targetPlanRoutes);// Singular endpoint
 app.use('/api/target-plans', authMiddleware.verifyToken, targetPlanRoutes);// Plural endpoint
-
+// Employee routes
+app.use('/api/employee', authMiddleware.verifyToken, employeeRoutes);// Singular endpoint
+app.use('/api/employees', authMiddleware.verifyToken, employeeRoutes);// Plural endpoint
+// Operator assignment routes
+app.use('/api/operator-assignment', authMiddleware.verifyToken, operatorAssignmentRoutes);// Singular endpoint
+app.use('/api/operator-assignments', authMiddleware.verifyToken, operatorAssignmentRoutes);// Plural endpoint
+// User routes
+app.use('/api/user', authMiddleware.verifyToken, userRoutes);// Singular endpoint
+app.use('/api/users', authMiddleware.verifyToken, userRoutes);// Plural endpoint
 
 // Database synchronization
 // sequelize.sync()

@@ -1,8 +1,8 @@
-// models/EmployeesMoz.js
+// models/Employee.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database/connection');
 
-const EmployeesMoz = sequelize.define('employees_moz', {
+const Employee = sequelize.define('employees_moz', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -174,4 +174,4 @@ const EmployeesMoz = sequelize.define('employees_moz', {
     timestamps: false, // Disable timestamps (createdAt and updatedAt columns)
 });
 
-module.exports = EmployeesMoz;
+module.exports = Employee;
