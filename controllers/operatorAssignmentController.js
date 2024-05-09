@@ -34,7 +34,7 @@ exports.addAssignment = async (req, res, next) => {
             throw new CustomError(400, 'Operator ID is required');
         }
         if (!shift || !site || !products || !sections) {
-            throw new CustomError(400, 'All fields are required');
+            throw new CustomError(400, 'Required fields are missing');
         }
         // Call service function to create assignment
         const result = await operatorAssignmentService.addAssignment(req.body);

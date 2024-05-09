@@ -52,7 +52,7 @@ exports.addOperator = async (req, res, next) => {
         const { name, username, email, entryid, password, workertype, shift, site } = req.body;
         // Check if all required fields are provided
         if (!name || !username || !email || !entryid || !password || !workertype || !shift || !site) {
-            throw new CustomError(400, 'All fields are required');
+            throw new CustomError(400, 'Required fields are missing');
         }
         // Call service function to create operator
         const result = await employeeService.createOperator(req.body);
@@ -84,7 +84,7 @@ exports.updateOperator = async (req, res, next) => {
             throw new CustomError(400, 'Employee ID is required');
         }
         if (!name || !entryid || !workertype || !shift || !site) {
-            throw new CustomError(400, 'All fields are required');
+            throw new CustomError(400, 'Required fields are missing');
         }
         // Call service function to update operator
         const result = await employeeService.updateOperator(employeeId, req.body);
@@ -136,6 +136,88 @@ exports.updateOperatorsShift = async (req, res, next) => {
         // Call service function to update operators shift
         const result = await employeeService.updateOperatorsShift(shift, operatorIds);
         res.status(200).json(new ApiResponse(200, result));
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.addWorker = async (req, res, next) => {
+    try {
+        const { name, entryId, type, workerType, shift, site, productIds, sectionIds, joiningDate } = req.body;
+        // Check if all required fields are provided
+        if (!name || !entryId || !type || !workerType || !shift || !site || !productIds || !sectionIds || !joiningDate) {
+            throw new CustomError(400, 'Required fields are missing');
+        }
+        // Call service function to create worker
+        const newWorker = await employeeService.createWorker(req.body);
+        res.status(200).json(new ApiResponse(200, newWorker, "Record created successfully"));
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.getEmployeesByRoleWorker = async (req, res, next) => {
+    try {
+        const workers = await employeeService.getEmployeesByRoleWorker(req.query);
+        res.status(200).json(new ApiResponse(200, workers));
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.getActiveWorkersCount = async (req, res, next) => {
+    try {
+        const { site } = req.query;
+        const totalWorkers = await employeeService.getActiveWorkersCount(site);
+        res.status(200).json(new ApiResponse(200, { totalWorkers: totalWorkers }, "Total active workers fetched successfully"));
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.getPresentWorkersCount = async (req, res, next) => {
+    try {
+        const { site } = req.query;
+        const totalWorkersPresent = await employeeService.getPresentWorkersCount(site);
+        res.status(200).json(new ApiResponse(200, { totalWorkersPresent: totalWorkersPresent }, "Total present workers fetched successfully"));
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.getAbsentWorkersCount = async (req, res, next) => {
+    try {
+        const { site } = req.query;
+        const totalWorkersAbsent = await employeeService.getAbsentWorkersCount(site);
+        res.status(200).json(new ApiResponse(200, { totalWorkersAbsent: totalWorkersAbsent }, "Total absent workers fetched successfully"));
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.deleteWorker = async (req, res, next) => {
+    try {
+        // Extract worker ID from request parameters
+        const workerId = req.params.id;
+
+        // Validate input
+        if (!workerId || !workerId.trim() || isNaN(workerId)) {
+            throw new CustomError(400, 'Worker ID is required');
+        }
+        const deletedWorker = await employeeService.deleteWorker(workerId);
+        if (!deletedWorker) {
+            throw new CustomError(400, 'Worker not found');
+        }
+        res.status(200).json(new ApiResponse(200, deletedWorker, "Worker deleted successfully"));
+    } catch (error) {
+        next(error); // Pass the error to the error handling middleware
+    }
+};
+
+exports.getWorkerZones = async (req, res, next) => {
+    try {
+        const workerZones = await employeeService.getWorkerZones(req.query);
+        res.status(200).json(new ApiResponse(200, workerZones));
     } catch (error) {
         next(error);
     }

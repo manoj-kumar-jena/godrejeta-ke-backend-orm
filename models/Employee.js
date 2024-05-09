@@ -101,7 +101,7 @@ const Employee = sequelize.define('employees_moz', {
     },
     email: {
         type: DataTypes.STRING(255),
-        allowNull: false,
+        allowNull: true,
     },
     roleid: {
         type: DataTypes.INTEGER,
